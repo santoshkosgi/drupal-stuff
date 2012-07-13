@@ -1,0 +1,10 @@
+name = "Google Connect"
+description = "Allows users to register / login using Gmail Account."
+core = 6.x
+dependencies[] = jquery_update
+; Information added by drupal.org packaging script on 2012-03-08
+version = "6.x-1.1"
+core = "6.x"
+project = "gconnect"
+datestamp = "1331184643"
+

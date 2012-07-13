@@ -1,0 +1,214 @@
+<?php
+
+function gconnect_init() {
+  if (variable_get('gconnect_developer_key', '') == "") {
+    drupal_set_message(t('Please configure google connect developer key at admin/settings/gconnect.'), "error");
+  }
+}
+/**
+ * Implements hook_menu(). Registers GIT callback page.
+ */
+function gconnect_menu() {
+  $items['git/callback'] = array(
+    'title' => 'GIT callback page',
+    'page callback' => 'git_callback',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'gconnect.pages.inc',
+  );
+  $items['git/auth/handler'] = array(
+    'title' => 'GIT Response Handler Page',
+    'page callback' => 'git_auth_handler',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'gconnect.pages.inc',
+  );
+  $items['admin/settings/gconnect'] = array(
+    'title' => 'Google Connect Settings',
+    'description' => 'Settings for Googel Connect API.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gconnect_settings'),
+    'access arguments' => array('administer site configuration'),
+  );
+  return $items;
+}
+
+function gconnect_footer() {
+  global $user;
+  if (!($user->uid)) {
+    //TODO: Add external javascript only in user login or register form pages.
+    $content = '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/googleapis/0.0.3/googleapis.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/jsapi"></script>';
+  }
+  return $content;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Prefills the login form with values acquired via OpenID.
+ */
+function gconnect_form_user_register_alter(&$form, &$form_state) {
+  global $base_url;
+  drupal_add_js(drupal_get_path('module', 'gconnect') . '/git-for-drupal.js', 'module', 'footer');
+  $idps = variable_get('gconnect_idps', array('Gmail'));
+  $selected_idps = "";
+  foreach ($idps as $idp => $value) {
+    if ($value) {
+      $selected_idps[] = $idp;
+    }
+  }
+  drupal_add_js(array('gconnect' => array('idps' => $selected_idps, 'devkey' => variable_get('gconnect_developer_key', ''), 'baseUrl' => $base_url)), 'setting');
+
+
+  // Only alter if the user is signing in using gconnect (the gconnect session may
+  // still be set if admin has signed in using gconnect and is adding a user, so
+  // check that this is not the case).
+  if (!isset($_SESSION) || !isset($_SESSION['gconnect']) || $_SESSION['gconnect']['status'] != 'ok' || user_access('administer users')) {
+    return;
+  }
+  $profile = $_SESSION['gconnect'];
+  if (isset($form['account'])) {
+    $use_form = &$form['account'];
+  }
+  else {
+    $use_form = &$form;
+  }
+  // Prefills the fields if IDP assertion verified
+  $use_form['name']['#default_value'] = $profile['displayname'];
+  $use_form['mail']['#default_value'] = $profile['email'];
+  $form['gid_display'] = array(
+    '#type' => 'item',
+    '#weight' => 10,
+    '#title' => t('Your account ID'),
+    '#description' => t('This gmail account will be linked to your site account after registration.'),
+    '#value' => check_plain($profile['identifier']),
+  );
+  // We get verified email address.
+  $use_form['pass']['#type'] = 'hidden';
+  $use_form['pass']['#value'] = user_password();
+  // replace the default user_register form submit handler with our own
+  $form['#submit'][array_search('user_register_submit', $form['#submit'])] = 'gconnect_user_register_submit';
+  // Unset Captcha
+  if (isset($form['captcha'])) {
+    unset($form['captcha']);
+  }
+  if (isset($form['mollom'])) {
+    unset($form['mollom']);
+    unset($form['#validate'][array_search('mollom_validate_analysis', $form['#validate'])]);
+    unset($form['#validate'][array_search('mollom_validate_captcha', $form['#validate'])]);
+    unset($form['#validate'][array_search('mollom_validate_post', $form['#validate'])]);
+    unset($form['#submit'][array_search('mollom_form_pre_submit', $form['#submit'])]);
+    unset($form['#submit'][array_search('mollom_form_submit', $form['#submit'])]);
+    if (isset($form['#submit']['mollom_data_delete_form_submit'])) {
+      unset($form['#submit']['mollom_data_delete_form_submit']);
+    }
+  }
+}
+
+/*
+ *
+ * hook form alter implementation.
+ *
+ */
+
+function gconnect_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == "user_login_block" || $form_id == "user_login") {
+    global $base_url;
+    drupal_add_js(drupal_get_path('module', 'gconnect') . '/git-for-drupal.js', 'module', 'footer');
+    $idps = variable_get('gconnect_idps', array('Gmail'));
+    $selected_idps = "";
+    foreach ($idps as $idp => $value) {
+      if ($value) {
+        $selected_idps[] = $idp;
+      }
+    }
+    drupal_add_js(array('gconnect' => array('idps' => $selected_idps, 'devkey' => variable_get('gconnect_developer_key', ''), 'baseUrl' => $base_url)), 'setting');
+  }
+}
+
+
+/**
+ * Custom submit handler for the standard user_register form.
+ */
+function gconnect_user_register_submit($form, &$form_state) {
+  $mail = $form_state['values']['mail'];
+  $name = $form_state['values']['name'];
+
+  $pass = user_password();
+
+  // The unset below is needed to prevent these form values from being saved as
+  // user data.
+  unset($form_state['values']['form_token'], $form_state['values']['submit'], $form_state['values']['op'], $form_state['values']['notify'], $form_state['values']['form_id'], $form_state['values']['affiliates'], $form_state['values']['destination']);
+
+  $merge_data = array('pass' => $pass, 'init' => $mail);
+  $merge_data['status'] = variable_get('user_register', 1) == 1;
+
+  $account = user_save('', array_merge($form_state['values'], $merge_data));
+
+  // Terminate if an error occured during user_save().
+  if (!$account) {
+    drupal_set_message(t("Error saving user account."), 'error');
+    $form_state['redirect'] = '';
+    return;
+  }
+
+  watchdog('gconnect', 'New user: %name (%email).', array('%name' => $name, '%email' => $mail), WATCHDOG_NOTICE, l(t('edit'), 'user/'. $account->uid .'/edit'));
+
+  $form_state['user'] = $account;
+  // Add plain text password into user account to generate mail tokens.
+  $account->password = $pass;
+  _user_mail_notify('register_no_approval_required', $account);
+  if (user_authenticate(array_merge($form_state['values'], $merge_data))) {
+    drupal_set_message(t('Registration successful. You are now logged in.'));
+  }
+  $form_state['redirect'] = '';
+  return;
+}
+
+function gconnect_settings() {
+  drupal_add_js('$(document).ready(function() {
+    $("#edit-gconnect-block-domains").change(function() {
+      if ($("#edit-gconnect-block-domains").is(":checked")) {
+        $("label[for=\"edit-gconnect-allowed-domains\"]").text("Blocked domain names:");
+        $("#edit-gconnect-allowed-domains-wrapper > .description").text("Restrict Registration & Login only to the user email addresses of other than above domain names. Separated multiple domain names by new line. Ex: gmail.com");
+      }
+      else {
+        $("label[for=\"edit-gconnect-allowed-domains\"]").text("Allowed domain names:");
+        $("#edit-gconnect-allowed-domains-wrapper > .description").text("Restrict Registration & Login only to the user email addresses of above domain names. Separated multiple domain names by new line. Ex: gmail.com");
+      }
+    });
+  });', 'inline');
+  $form['gconnect_developer_key'] = array('#type' => 'textfield',
+    '#title' => t('Google Developer API Key'),
+    '#default_value' => variable_get('gconnect_developer_key', ''),
+    '#description' => t("Get Google Developer Key From http://code.google.com"),
+  );
+  $form['gconnect_idps'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Default options'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('gconnect_idps', array('Gmail')),
+    '#options' => array(
+      'Gmail' => t('Gmail'),
+      'AOL' => t('AOL'),
+      'Hotmail' => t('Hotmail'),
+      'Yahoo' => t('Yahoo'),
+    ),
+   '#description' => t('Please select IDP\'s you want to use to login.'),
+  );
+  $form['gconnect_allowed_domains'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Allowed domain names'),
+    '#default_value' => variable_get('gconnect_allowed_domains', ''),
+    '#description' => t("Restrict Registration & Login only to the user email addresses of above domain names. Separated multiple domain names by new line. Ex: gmail.com"),
+  );
+  $form['gconnect_block_domains'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Block Above Domain Names.'),
+    '#default_value' => variable_get('gconnect_block_domains', ''),
+    '#description' => t("Instead of allowing above domain names, if you check this field above domain names will be blocked and all other will be accepted."),
+  );
+  return system_settings_form($form);
+}

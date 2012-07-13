@@ -1,0 +1,25 @@
+/*bof slideshow css*/
+#slideshow {
+    position:relative;
+    height:212px;
+	padding:0; 
+	margin:0;
+}
+
+
+#slideshow IMG {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:8;
+}
+
+#slideshow IMG.active {
+    z-index:10;
+}
+
+#slideshow IMG.last-active {
+    z-index:9;
+}
+
+/*eof slideshow css*/

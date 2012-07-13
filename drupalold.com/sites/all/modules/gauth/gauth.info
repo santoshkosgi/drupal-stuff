@@ -1,0 +1,12 @@
+name = Google Auth
+description = "Google Authentication module - uses OAuth"
+core = 6.x
+dependencies[] = oauth_common
+
+
+; Information added by drupal.org packaging script on 2012-02-21
+version = "6.x-1.0-rc1"
+core = "6.x"
+project = "gauth"
+datestamp = "1329782442"
+

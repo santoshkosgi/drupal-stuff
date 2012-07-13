@@ -1,0 +1,378 @@
+/* This file will hold styles for the mobile version of your website (mobile first). */
+/* This also can include ANY global CSS that applies site-wide. Unless overwritten by a more specific style rule, CSS declarations in global.css will apply site-wide. */
+/* CSS Document */
+
+
+body
+{
+  font:normal 12px Arial, Helvetica, sans-serif;
+  color:#656565;
+  line-height:18px;
+  margin:0;
+  padding:0;
+  background:url(/dru/sites/all/themes/faichi/images/body-bg.gif) repeat;
+}
+a{ color:#1a4784; text-decoration:underline;}
+a:hover{text-decoration:none;}
+:focus, a:focus, img {outline:none; border:none;}
+
+.clear{ clear:both;}
+.fl{ float:left; }
+.fr{ float:right; }
+p{  margin:0; padding:10px 0;}
+
+h1
+{
+  font:bold 14px Arial, Helvetica, sans-serif;
+  color:#000;
+  line-height:normal;
+  margin:0;
+  padding:0;
+  text-transform:uppercase;
+  text-decoration:none;
+
+}
+h2
+{
+  font:bold 14px Arial, Helvetica, sans-serif;
+  color:#5d5d5d;
+  line-height:normal;
+  margin:10px 0 0;
+  padding:0;
+  text-transform:uppercase;
+  text-decoration:none;
+
+}
+
+#mainWrapper
+{
+  width:906px;
+  margin:auto;
+  background:url(../images/wrapper-shadow.gif) repeat-y center 0;
+}
+
+#header
+{
+  width:896px;
+  margin:0 auto;
+}
+
+.navigation
+{
+  height:41px;
+  margin:0;
+  background:url(../images/nav-bg.gif) repeat-x;
+  border-image:url(../images/top-line.gif);
+  border-top:10px solid;
+}
+
+.navigation ul
+{
+  margin:0;
+  padding:0;
+  float:right;
+  list-style:none;
+}
+
+.navigation ul li
+{
+  margin:0;
+  padding:0;
+  float:left;
+  display:inline-block;
+  background:none;
+  position:relative;
+  background:url(../images/nav-divider.gif) no-repeat right;
+}
+
+.navigation ul li a
+{
+  margin:0 2px 0 0;
+  padding:0 25px;
+  height:41px;
+  float:left;
+  font:normal 16px Arial, Helvetica, sans-serif;
+  color:#000;
+  line-height:41px;
+  text-decoration:none;
+
+}
+.navigation ul li a:hover, #navdiv ul li a.current
+{
+  color:#fff;
+  background:url(../images/nav-on.gif) repeat-x;
+}
+.navigation ul li.last
+{
+  margin-right:0;
+}
+.navigation ul li.last a
+{
+  margin-right:0;
+}
+
+/* superfish menu css */
+
+.content.clearfix
+{
+  height:41px;
+  margin:0;
+  background:url(../images/nav-bg.gif) repeat-x;
+  border-image:url(../images/top-line.gif);
+  border-top:10px solid;
+}
+
+.content.clearfix ul
+{
+  margin:0;
+  padding:0;
+  float:right;
+  list-style:none;
+}
+
+.content.clearfix ul li
+{
+  margin:0;
+  padding:0;
+  float:left;
+  display:inline-block;
+  background:none;
+  position:relative;
+  background:url(../images/nav-divider.gif) no-repeat right;
+}
+
+.content.clearfix ul li a
+{
+  margin:0 2px 0 0;
+  padding:0 25px;
+  height:41px;
+  float:left;
+  font:normal 16px Arial, Helvetica, sans-serif;
+  color:#000;
+  line-height:41px;
+  text-decoration:none;
+
+}
+.content.clearfix ul li a:hover, #navdiv ul li a.current
+{
+  color:#fff;
+  background:url(../images/nav-on.gif) repeat-x;
+}
+.content.clearfix ul li.last
+{
+  margin-right:0;
+}
+.navigation ul li.last a
+{
+  margin-right:0;
+}
+/* end */
+
+
+
+.banner
+{
+  width:896px;
+  height:212px;
+}
+
+
+#middleWrapper
+{
+  width:896px;
+  margin:auto;
+  background:#fff;
+}
+#middleWrapper.inner
+{
+  background:#eaeaea;
+  position:relative;
+}
+
+#middleWrapper.inner .topShadow {
+  background:url(../images/inner-center-top.png) no-repeat;
+  height:20px;
+  width:896px;
+  position:absolute;
+}
+
+.homeOfferings {
+  width:896px;
+  padding:32px 0 10px 0;
+  background:#f3f3f3 url(../images/home-offering-bg.png) no-repeat center top;
+}
+
+.homeOfferings  .thumb {
+  float:left;
+  padding:10px 0 0 30px;
+}
+
+.homeOfferings  .content {
+  width:435px;
+  padding:0 0 0 135px;
+}
+
+.readMore {
+  font-size:10px;
+  color:#ee811a;
+  text-decoration:underline;
+}
+
+.readMore:hover {
+  text-decoration:none;
+}
+.homeOfferings .content  > .readMore {
+  margin-top:-10px;
+  z-index:999;
+  position:relative;
+}
+
+.homeBottomContent {
+  width:896px;
+  margin:1px 0 0 0;
+  padding:22px 0 0 0;
+  background:url(../images/home-bot-content-bg.png) no-repeat 0 top;
+}
+
+.ContentBox {
+  width:180px;
+  float:left;
+  text-align:justify;
+  margin:0 30px;
+  padding:0 0 20px 0;
+}
+.ContentBox.medium {
+  width:370px;
+  margin:0 15px 0 30px;
+}
+
+.homeBottomContent  .ContentBox.medium {
+  margin-top:-170px;
+  z-index:1;
+}
+
+.centerColumn {
+  width:631px;
+  min-height:500px;
+  height:auto !important;
+  height:500px;
+  padding:25px 20px 0 35px;
+  float:left;
+  background:#fff url(../images/center-column-bg.gif) no-repeat left 50px;
+}
+#middleWrapper.inner.rCol .centerColumn {
+  background:#fff;
+}
+
+#middleWrapper.inner.wide .centerColumn {
+  background:#fff;
+  width:auto;
+}
+
+.leftColumn
+{
+  width:210px;
+  float:left;
+  padding:30px 0 0;
+  background:#eaeaea url(../images/column-bg.gif) repeat-x;
+}
+.rightColumn
+{
+  width:210px;
+  float:right;
+  padding:30px 0 0;
+  background:#eaeaea url(../images/column-bg.gif) repeat-x;
+}
+
+.leftColumn ul, .rightColumn ul
+{
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.leftColumn ul li a, .rightColumn ul li a
+{
+  margin:0;
+  padding:0 0 15px 30px;
+  color:#5d5d5d;
+  text-decoration:none;
+  width:180px;
+  display:block;
+  background:url(../images/black-arrow.gif) no-repeat 15px 3px;
+}
+.leftColumn ul li a:hover, #leftColumn ul li a.current { color:#000;}
+.rightColumn ul li a:hover, #rightColumn ul li a.current { color:#000;}
+
+#footer {
+  width:896px;
+  text-align:center;
+  font-size:11px;
+  color:#8d8d8d;
+  margin:0 auto;
+  padding:10px 0;
+  background:#fff url(../images/footer-bg.gif) no-repeat center top;
+}
+#middleWrapper.inner .centerColumn #footer {
+  width:auto
+}
+
+
+/*bof slideshow css*/
+#slideshow {
+    position:relative;
+    height:212px;
+  padding:0;
+  margin:0;
+}
+
+
+#slideshow IMG {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:8;
+}
+
+#slideshow IMG.active {
+    z-index:10;
+}
+
+#slideshow IMG.last-active {
+    z-index:9;
+}
+
+/*eof slideshow css*/
+
+/* drop down css*/
+
+#navdiv ul                         { position: relative; z-index: 99999; }
+#navdiv ul li a                    { display: block; }
+#navdiv ul li.hover,
+#navdiv ul li:hover                {position: relative; }
+#navdiv ul li.hover a              { }
+
+
+/*
+  LEVEL TWO
+*/
+#navdiv ul ul             { width: 190px; visibility: ; display:none; position: absolute; top: 100%; left: 0;  }
+
+#navdiv ul li.last ul ul      { width: 190px; visibility: ; display:none; position: absolute; top: 0; left: -170px; }
+#navdiv ul ul li          {  float: left; background: none; position: relative; float:none !important;  }
+
+
+
+                                    /* IE 6 & 7 Needs Inline Block */
+#navdiv ul ul li a          { background:#000; font-size:11px; color:#fff ; width: 180px; display: inline-block; padding: 6px 0 6px 10px  !important;   line-height: normal; margin: 0  !important; border-bottom:1px solid #3f3f3f; border-right:none !important; height:auto !important; line-height:normal !important; float:none !important;}
+                  border-right:none !important;  }
+#navdiv ul ul li a:hover      { background:none !important;}
+
+
+
+
+/*
+  LEVEL THREE
+*/
+#navdiv ul ul ul          { left: 100%; top: 0; }
+#navdiv ul li:hover > ul      { visibility: ; }

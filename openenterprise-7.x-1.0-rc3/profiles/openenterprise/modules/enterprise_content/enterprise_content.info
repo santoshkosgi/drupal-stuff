@@ -1,0 +1,31 @@
+name = OpenEnterprise Content
+description = Default content for OpenEnterprise
+core = 7.x
+package = Other
+php = 5.2.4
+dependencies[] = boxes
+dependencies[] = features
+dependencies[] = menu
+dependencies[] = strongarm
+features[box][] = oe1
+features[box][] = oe2
+features[box][] = oe3
+features[content][] = about_us
+features[content][] = home
+features[content][] = privacy_policy
+features[content][] = terms_and_conditions
+features[ctools][] = boxes:box:1
+features[features_api][] = api:1
+features[menu_custom][] = menu-legal-notices
+features[menu_custom][] = menu-social
+features[menu_links][] = menu-social:http://twitter.com
+features[menu_links][] = menu-social:http://www.facebook.com
+features[menu_links][] = menu-social:http://www.linkedin.com
+features[menu_links][] = menu-social:http://www.youtube.com
+
+; Information added by drupal.org packaging script on 2012-05-21
+version = "7.x-1.0-rc3"
+core = "7.x"
+project = "openenterprise"
+datestamp = "1337628667"
+

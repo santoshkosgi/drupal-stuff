@@ -1,0 +1,255 @@
+/* CSS Document */
+
+
+body
+{
+	font:normal 12px Arial, Helvetica, sans-serif;
+	color:#656565;
+	line-height:18px;
+	margin:0;
+	padding:0;
+	background:url(../images/body-bg.gif) repeat;
+}
+a{ color:#1a4784; text-decoration:underline;}
+a:hover{text-decoration:none;}
+:focus, a:focus, img {outline:none; border:none;}
+
+.clear{	clear:both;}
+.fl{ float:left; }
+.fr{ float:right; }
+p{	margin:0; padding:10px 0;}
+
+h1
+{
+	font:bold 14px Arial, Helvetica, sans-serif;
+	color:#000;
+	line-height:normal;
+	margin:0; 
+	padding:0;
+	text-transform:uppercase;	
+	text-decoration:none;
+	
+}
+h2
+{
+	font:bold 14px Arial, Helvetica, sans-serif;
+	color:#5d5d5d;
+	line-height:normal;
+	margin:10px 0 0; 
+	padding:0;
+	text-transform:uppercase;	
+	text-decoration:none;
+	
+}
+
+#mainWrapper
+{
+	width:906px;
+	margin:auto;
+	background:url(../images/wrapper-shadow.gif) repeat-y center 0;	
+}
+
+#header
+{
+	width:896px;
+	margin:0 auto;
+}
+
+#navdiv
+{
+	height:41px;
+	margin:0;
+	background:url(../images/nav-bg.gif) repeat-x;	
+}
+
+#navdiv ul
+{
+	margin:0;
+	padding:0;
+	float:right;
+	list-style:none;
+}
+
+#navdiv ul li
+{
+	margin:0;
+	padding:0;
+	float:left;
+	display:inline-block;
+	background:none;
+	position:relative;
+	background:url(../images/nav-divider.gif) no-repeat right;	
+}
+
+#navdiv ul li a
+{
+	margin:0 2px 0 0;
+	padding:0 25px;
+	height:41px;
+	float:left;
+	font:normal 12px Arial, Helvetica, sans-serif;
+	color:#000;
+	line-height:41px;
+	text-decoration:none;
+
+}
+#navdiv ul li a:hover, #navdiv ul li a.current
+{
+	color:#fff;
+	background:url(../images/nav-on.gif) repeat-x;	
+}
+#navdiv ul li.last
+{
+	margin-right:0;
+}
+#navdiv ul li.last a
+{
+	margin-right:0;
+}
+
+.banner
+{
+	width:896px;
+	height:212px;
+}
+
+
+#middleWrapper
+{	
+	width:896px;
+	margin:auto;
+	background:#fff;
+}
+#middleWrapper.inner
+{	
+	background:#eaeaea;
+	position:relative;
+}
+
+#middleWrapper.inner .topShadow {
+	background:url(../images/inner-center-top.png) no-repeat;
+	height:20px;
+	width:896px;
+	position:absolute;
+}
+
+.homeOfferings {
+	width:896px;
+	padding:32px 0 10px 0;
+	background:#f3f3f3 url(../images/home-offering-bg.png) no-repeat center top;
+}
+
+.homeOfferings  .thumb {
+	float:left;
+	padding:10px 0 0 30px;
+}
+
+.homeOfferings  .content {
+	width:435px;
+	padding:0 0 0 135px;
+}
+
+.readMore {
+	font-size:10px;
+	color:#ee811a;
+	text-decoration:underline;
+}
+
+.readMore:hover {
+	text-decoration:none;
+}
+.homeOfferings .content  > .readMore {
+	margin-top:-10px;
+	z-index:999;
+	position:relative;
+}
+
+.homeBottomContent {
+	width:896px;
+	margin:1px 0 0 0;
+	padding:22px 0 0 0;
+	background:url(../images/home-bot-content-bg.png) no-repeat 0 top;
+}
+
+.ContentBox {
+	width:180px;
+	float:left;
+	text-align:justify;
+	margin:0 30px;
+	padding:0 0 20px 0;
+}
+.ContentBox.medium {
+	width:370px;
+	margin:0 15px 0 30px;
+}
+
+.homeBottomContent  .ContentBox.medium {
+	margin-top:-170px;
+	z-index:1;
+}
+
+.centerColumn {
+	width:631px;
+	min-height:500px;
+	height:auto !important;
+	height:500px;
+	padding:25px 20px 0 35px;
+	float:left;
+	background:#fff url(../images/center-column-bg.gif) no-repeat left 50px;
+}
+#middleWrapper.inner.rCol .centerColumn {
+	background:#fff;
+}
+
+#middleWrapper.inner.wide .centerColumn {
+	background:#fff;
+	width:auto;
+}
+
+.leftColumn
+{	
+	width:210px;
+	float:left;
+	padding:30px 0 0;
+	background:#eaeaea url(../images/column-bg.gif) repeat-x;
+}
+.rightColumn
+{	
+	width:210px;
+	float:right;
+	padding:30px 0 0;
+	background:#eaeaea url(../images/column-bg.gif) repeat-x;
+}
+
+.leftColumn ul, .rightColumn ul
+{	
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+
+.leftColumn ul li a, .rightColumn ul li a
+{	
+	margin:0;
+	padding:0 0 15px 30px;
+	color:#5d5d5d;
+	text-decoration:none;
+	width:180px;
+	display:block;
+	background:url(../images/black-arrow.gif) no-repeat 15px 3px;
+}
+.leftColumn ul li a:hover, #leftColumn ul li a.current { color:#000;}
+.rightColumn ul li a:hover, #rightColumn ul li a.current { color:#000;}
+
+#footer {
+	width:896px;
+	text-align:center;
+	font-size:11px;
+	color:#8d8d8d;
+	margin:0 auto;
+	padding:10px 0;
+	background:#fff url(../images/footer-bg.gif) no-repeat center top;
+}
+#middleWrapper.inner .centerColumn #footer {
+	width:auto
+}

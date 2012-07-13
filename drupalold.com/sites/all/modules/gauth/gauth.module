@@ -1,0 +1,180 @@
+<?php
+
+// Uses HMAC-SHA1 as the signature method.
+
+
+/**
+ * Implementation of hook_perm().
+ */
+function gauth_perm() {
+  return array('administer gauth', 'authenticate with google apps');
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function gauth_menu() {
+  $items = array();
+
+  $items['admin/settings/gauth'] = array(
+    'title' => 'Google Auth',
+    'description' => 'Google Authentication settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gauth_settings_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer gauth'),
+    'file' => 'gauth.admin.inc',
+  );
+
+  $items['gauth-token'] = array(
+    'title' => 'Google Auth Token',
+    'description' => 'Google Authentication callback',
+    'page callback' => 'gauth_access_token',
+    'access callback' => 'user_access',
+    'access arguments' => array('authenticate with google apps'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_user().
+ */
+function gauth_user($op, &$edit, &$account, $category = NULL) {
+  switch ($op) {
+    // Authenticate the user with their Google Apps account.
+    case 'login':
+      if (user_access('authenticate with google apps')) {
+        _gauth_gapps_authenticate($account);
+      }
+      break;
+
+    // Add a field for the Google Apps email address to their profile form.
+    case 'form':
+      // If drupalgapps_ui module exists, it will add the field to the profile.
+      if ($category == 'account' && user_access('administer gauth') && !module_exists('drupalgapps_ui')) {
+        $form['gapps_account_mail'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Google Apps e-mail address'),
+          '#default_value' => !empty($edit['gapps_account_mail']) ? $edit['gapps_account_mail'] : '',
+        );
+        return $form;
+      }
+      break;
+
+    case 'validate':
+      if (!module_exists('drupalgapps_ui')) {
+        return array('gapps_account_mail' => isset($edit['gapps_account_mail']) ? $edit['gapps_account_mail'] : '');
+      }
+
+    case 'insert':
+      if (!module_exists('drupalgapps_ui')) {
+        $edit['gapps_account_mail'] = '';
+      }
+      break;
+
+  }
+}
+
+/**
+ * Login the user into their Google Apps account.
+ */
+function _gauth_gapps_authenticate($account) {
+  module_load_include('inc', 'oauth_common');
+
+  $server = variable_get('gauth_oauth_server', 'https://www.google.com/accounts');
+
+  $hd = variable_get('gauth_hd', '');
+  $scopes = variable_get('gauth_scopes', '');
+
+  // Get the configured consumer key and secret.
+  $consumer_key = variable_get('gauth_consumer_key', '');
+  $consumer_secret = variable_get('gauth_consumer_secret', '');
+  if (empty($consumer_key) || empty($consumer_secret)) {
+    watchdog('gauth', t('Missing Google Auth consumer key or secret.'));
+    return;
+  }
+
+  if (variable_get('gauth_two_legged_oauth', FALSE)) {
+    if (empty($account->gapps_account_mail)) {
+      return;
+    }
+
+    // @TODO: remove hard-coding, see how we implement provisioning api first.
+    $server = 'http://www.google.com';
+    $path = '/m8/feeds/contacts/default/full/';  
+
+    // Setup consumer and oauth client.
+    $consumer = new DrupalOAuthConsumer($consumer_key, $consumer_secret, NULL);
+    $client = new DrupalOAuthClient($server, $consumer, NULL);
+
+    // Get signature method.
+    $signature_method = $client->signatureMethod('sha1');
+
+    $params = array('max-results' => 10, 'xoauth_requestor_id' => $account->gapps_account_mail);  
+    $response = $client->get($path, FALSE, $params);
+    watchdog('gauth', 'response: '. $response);
+  }
+  else {
+    // Setup consumer and oauth client.
+    $consumer = new DrupalOAuthConsumer($consumer_key, $consumer_secret, NULL);
+    $client = new DrupalOAuthClient($server, $consumer, NULL);
+
+    // Get signature method.
+    $signature_method = $client->signatureMethod('sha1');
+
+    // Get request token.
+    $request_params = array();
+    $request_params['scope'] = $scopes;
+    $request_params['xoauth_displayname'] = variable_get('gauth_app_display_name', '');
+    $request_params['oauth_callback'] = base_path() . 'gauth-token';
+    $request_token = $client->getRequestToken('/OAuthGetRequestToken', $request_params);
+    $token = new stdClass;
+    $token->key = $request_token->key;
+    $token->secret = $request_token->secret;
+    $_SESSION['gauth_request_token'] = $token;
+
+    // Get request token authorized.
+    $auth_params = array();
+    $auth_params['hd'] = $hd;
+    $auth_url = $client->getAuthorizationUrl(NULL, '/OAuthAuthorizeToken', $auth_params);
+    drupal_goto($auth_url);
+    return;
+  }
+}
+
+/**
+ * Exchange the authorized request token for an access token.
+ */
+function gauth_access_token() {
+  $consumer_key = variable_get('gauth_consumer_key', '');
+  $consumer_secret = variable_get('gauth_consumer_secret', '');
+  $server = variable_get('gauth_oauth_server', 'https://www.google.com/accounts');
+
+  $oauth_verifier = urldecode($_GET['oauth_verifier']);
+  $oauth_token = urldecode($_GET['oauth_token']);
+  if (empty($oauth_verifier) || empty($oauth_token)) {
+    drupal_goto('/');
+    return;
+  }
+
+  // Setup consumer and oauth client.
+  $consumer = new DrupalOAuthConsumer($consumer_key, $consumer_secret, NULL);
+  $token = $_SESSION['gauth_request_token'];
+  $request_token = new OAuthToken($token->key, $token->secret);
+  $client = new DrupalOAuthClient($server, $consumer, $request_token);
+
+  // Get signature method.
+  $signature_method = $client->signatureMethod('sha1');
+
+
+  // Exchange the authorized request token for an access token.
+  $params = array();
+  $params['oauth_verifier'] = $oauth_verifier;
+  $params['oauth_token'] = $oauth_token;
+  $access = $client->getAccessToken('/OAuthGetAccessToken', $params);
+
+  drupal_goto();
+}
+

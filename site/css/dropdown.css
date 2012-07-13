@@ -1,0 +1,31 @@
+
+#navdiv ul                         { position: relative; z-index: 99999; }
+#navdiv ul li a                    { display: block; }
+#navdiv ul li.hover,
+#navdiv ul li:hover                {position: relative; }
+#navdiv ul li.hover a              { }
+
+
+/* 
+	LEVEL TWO
+*/
+#navdiv ul ul 						{ width: 190px; visibility: ; display:none; position: absolute; top: 100%; left: 0;  }
+
+#navdiv ul li.last ul ul			{ width: 190px; visibility: ; display:none; position: absolute; top: 0; left: -170px; }
+#navdiv ul ul li 					{  float: left; background: none; position: relative; float:none !important;  }
+
+
+									  
+                                    /* IE 6 & 7 Needs Inline Block */
+#navdiv ul ul li a					{ background:#000; font-size:11px; color:#fff ; width: 180px; display: inline-block; padding: 6px 0 6px 10px  !important;   line-height: normal; margin: 0  !important; border-bottom:1px solid #3f3f3f; border-right:none !important; height:auto !important; line-height:normal !important; float:none !important;} 
+									border-right:none !important;  }
+#navdiv ul ul li a:hover			{ background:none !important;}
+
+
+
+
+/* 
+	LEVEL THREE
+*/
+#navdiv ul ul ul 					{ left: 100%; top: 0; }
+#navdiv ul li:hover > ul 			{ visibility: ; }

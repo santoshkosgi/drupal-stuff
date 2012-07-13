@@ -1,0 +1,26 @@
+name = New
+description = A New Theme
+package = Core
+version = 7.1
+core = 7.x
+
+
+;css
+stylesheets[all][] = css/dropdown.css
+stylesheets[all][] = css/slideShow.css
+stylesheets[all][] = css/stylesheet.css
+
+;Javascripts
+scripts[] = js/dropdown.js
+scripts[] = js/jquery-1.4.2.min.js
+scripts[] = js/slideShow.js
+
+;Regions
+regions[page_top] = 'Page Top'
+regions[menu] =  'Menu'
+regions[banner] = 'Banner'
+regions[content] = 'Content'
+regions[content_first] = Content FIrst
+regions[content_second] = Content Second
+regions[content_third] =  Content third
+regions[footer] = Footer

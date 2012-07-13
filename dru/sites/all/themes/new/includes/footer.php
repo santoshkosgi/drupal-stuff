@@ -1,0 +1,1 @@
+<div id="footer">All Rights reserved 2012 FaiChi</div>

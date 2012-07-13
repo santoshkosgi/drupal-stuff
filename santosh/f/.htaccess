@@ -1,0 +1,5 @@
+AuthUserFile /home/santosh/Desktop/x/.htpasswd
+AuthName "Dave's Login Area"
+AuthType Basic
+
+require valid-user
